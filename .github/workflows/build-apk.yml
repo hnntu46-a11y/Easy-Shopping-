@@ -1,0 +1,22 @@
+name: Easy Shopping APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Check project files
+        run: |
+          ls -la
+          find . -maxdepth 3 -type f | head -100
