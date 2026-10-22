@@ -1,0 +1,41 @@
+name: Build Easy Shopping APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'easy_shopping_starter.zip'
+      - '.github/workflows/build-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Extract project
+        run: |
+          unzip easy_shopping_starter.zip -d source
+          flutter create --platforms=android \
+            --project-name easy_shopping app
+          cp source/easy_shopping/lib/main.dart app/lib/main.dart
+          cp source/easy_shopping/pubspec.yaml app/pubspec.yaml
+
+      - name: Build APK
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Easy-Shopping-APK
+          path: app/build/app/outputs/flutter-apk/app-release.apk
